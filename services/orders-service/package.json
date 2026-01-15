@@ -1,0 +1,37 @@
+{
+  "name": "orders-service",
+  "version": "1.0.0",
+  "description": "Orders microservice for Zero-Trust API Gateway",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only index.ts",
+    "build": "tsc",
+    "serve": "node dist/index.js"
+  },
+  "keywords": [
+    "graphql",
+    "apollo",
+    "federation",
+    "orders",
+    "microservice"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@apollo/server": "^4.12.2",
+    "@apollo/subgraph": "^2.9.5",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "graphql": "^16.9.0",
+    "graphql-tag": "^2.12.6"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,285 @@
+== Security Checks ==
+Target: http://localhost:3000
+
+1) Invalid Login (expected 401)
+HTTP/1.1 401 Unauthorized
+X-Request-ID: f1e7d9dc-2d24-4b66-a1a9-f45e6c9c57c8
+Content-Security-Policy: default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data: https:;connect-src 'self';font-src 'self';object-src 'none';media-src 'self';frame-src 'none';base-uri 'self';form-action 'self';frame-ancestors 'none';upgrade-insecure-requests;script-src-attr 'none'
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: strict-origin-when-cross-origin
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Request-ID,X-RateLimit-Limit,X-RateLimit-Remaining
+RateLimit-Policy: 5;w=30
+RateLimit-Limit: 5
+RateLimit-Remaining: 4
+RateLimit-Reset: 30
+Content-Type: application/json; charset=utf-8
+Content-Length: 188
+ETag: W/"bc-GglnAIrpuk2xpQQa5J3QJm51sNc"
+Date: Wed, 14 Jan 2026 21:53:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"error":{"code":"AUTHENTICATION_ERROR","message":"Invalid credentials"},"meta":{"requestId":"f1e7d9dc-2d24-4b66-a1a9-f45e6c9c57c8","timestamp":"2026-01-14T21:53:06.621Z"}}
+2) Weak Password Registration (expected 400)
+HTTP/1.1 400 Bad Request
+X-Request-ID: 97b326be-7a6f-4a4e-a828-68675bcde750
+Content-Security-Policy: default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data: https:;connect-src 'self';font-src 'self';object-src 'none';media-src 'self';frame-src 'none';base-uri 'self';form-action 'self';frame-ancestors 'none';upgrade-insecure-requests;script-src-attr 'none'
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: strict-origin-when-cross-origin
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Request-ID,X-RateLimit-Limit,X-RateLimit-Remaining
+RateLimit-Policy: 5;w=30
+RateLimit-Limit: 5
+RateLimit-Remaining: 3
+RateLimit-Reset: 30
+Content-Type: application/json; charset=utf-8
+Content-Length: 290
+ETag: W/"122-MvM4J3RxB6lCi/LdfdUIcdo4kOE"
+Date: Wed, 14 Jan 2026 21:53:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"error":{"code":"VALIDATION_ERROR","message":"Request validation failed","details":{"errors":[{"field":"password","message":"String must contain at least 8 character(s)"}]}},"meta":{"requestId":"97b326be-7a6f-4a4e-a828-68675bcde750","timestamp":"2026-01-14T21:53:06.635Z"}}
+3) SQL Injection Attempt (expected 400)
+HTTP/1.1 400 Bad Request
+X-Request-ID: 568b7e0e-3ae2-4942-a223-9b5f556589e8
+Content-Security-Policy: default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data: https:;connect-src 'self';font-src 'self';object-src 'none';media-src 'self';frame-src 'none';base-uri 'self';form-action 'self';frame-ancestors 'none';upgrade-insecure-requests;script-src-attr 'none'
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: strict-origin-when-cross-origin
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Request-ID,X-RateLimit-Limit,X-RateLimit-Remaining
+RateLimit-Policy: 100;w=900
+RateLimit-Limit: 100
+RateLimit-Remaining: 95
+RateLimit-Reset: 779
+Content-Type: application/json; charset=utf-8
+Content-Length: 195
+ETag: W/"c3-c6vvKdXNuROKOsCu8026mvMydy0"
+Date: Wed, 14 Jan 2026 21:53:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"error":{"code":"INVALID_QUERY_PARAMETER","message":"Invalid query parameter"},"meta":{"requestId":"568b7e0e-3ae2-4942-a223-9b5f556589e8","timestamp":"2026-01-14T21:53:06.664Z"}}
+4) XSS Attempt (expected 400)
+HTTP/1.1 400 Bad Request
+X-Request-ID: 9df5b545-dbb6-46c0-9bc4-ab8f7c2119d5
+Content-Security-Policy: default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data: https:;connect-src 'self';font-src 'self';object-src 'none';media-src 'self';frame-src 'none';base-uri 'self';form-action 'self';frame-ancestors 'none';upgrade-insecure-requests;script-src-attr 'none'
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: strict-origin-when-cross-origin
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Request-ID,X-RateLimit-Limit,X-RateLimit-Remaining
+RateLimit-Policy: 100;w=900
+RateLimit-Limit: 100
+RateLimit-Remaining: 94
+RateLimit-Reset: 779
+Content-Type: application/json; charset=utf-8
+Content-Length: 195
+ETag: W/"c3-ouYuEMoVQ3OSDQng2xhxOAe2VGk"
+Date: Wed, 14 Jan 2026 21:53:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"error":{"code":"INVALID_QUERY_PARAMETER","message":"Invalid query parameter"},"meta":{"requestId":"9df5b545-dbb6-46c0-9bc4-ab8f7c2119d5","timestamp":"2026-01-14T21:53:06.677Z"}}
+5) Path Traversal Attempt (expected 400)
+HTTP/1.1 404 Not Found
+X-Request-ID: 03bffcd3-4ed2-46ca-a796-70b56e5ceadc
+Content-Security-Policy: default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data: https:;connect-src 'self';font-src 'self';object-src 'none';media-src 'self';frame-src 'none';base-uri 'self';form-action 'self';frame-ancestors 'none';upgrade-insecure-requests;script-src-attr 'none'
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: strict-origin-when-cross-origin
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Request-ID,X-RateLimit-Limit,X-RateLimit-Remaining
+RateLimit-Policy: 100;w=900
+RateLimit-Limit: 100
+RateLimit-Remaining: 93
+RateLimit-Reset: 779
+Content-Type: application/json; charset=utf-8
+Content-Length: 176
+ETag: W/"b0-4iCnC9ODTN1dMCpmhs1HbOK5GyY"
+Date: Wed, 14 Jan 2026 21:53:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"error":{"code":"NOT_FOUND","message":"Resource not found"},"meta":{"requestId":"03bffcd3-4ed2-46ca-a796-70b56e5ceadc","timestamp":"2026-01-14T21:53:06.689Z"}}
+6) Invalid Content-Type (expected 415)
+HTTP/1.1 415 Unsupported Media Type
+X-Request-ID: 9372555d-5fa4-4ac2-a98a-6a9227ef9e2e
+Content-Security-Policy: default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data: https:;connect-src 'self';font-src 'self';object-src 'none';media-src 'self';frame-src 'none';base-uri 'self';form-action 'self';frame-ancestors 'none';upgrade-insecure-requests;script-src-attr 'none'
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: strict-origin-when-cross-origin
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Request-ID,X-RateLimit-Limit,X-RateLimit-Remaining
+RateLimit-Policy: 100;w=900
+RateLimit-Limit: 100
+RateLimit-Remaining: 92
+RateLimit-Reset: 779
+Content-Type: application/json; charset=utf-8
+Content-Length: 197
+ETag: W/"c5-G3wn8U5lXHxoYWR/OxQ8rghe48w"
+Date: Wed, 14 Jan 2026 21:53:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"error":{"code":"UNSUPPORTED_CONTENT_TYPE","message":"Unsupported Content-Type"},"meta":{"requestId":"9372555d-5fa4-4ac2-a98a-6a9227ef9e2e","timestamp":"2026-01-14T21:53:06.702Z"}}
+7) Missing Content-Type (expected 400)
+HTTP/1.1 400 Bad Request
+X-Request-ID: d88a563e-7dad-4444-9930-40e8cc8bd8fd
+Content-Security-Policy: default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data: https:;connect-src 'self';font-src 'self';object-src 'none';media-src 'self';frame-src 'none';base-uri 'self';form-action 'self';frame-ancestors 'none';upgrade-insecure-requests;script-src-attr 'none'
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: strict-origin-when-cross-origin
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Request-ID,X-RateLimit-Limit,X-RateLimit-Remaining
+RateLimit-Policy: 5;w=30
+RateLimit-Limit: 5
+RateLimit-Remaining: 2
+RateLimit-Reset: 30
+Content-Type: application/json; charset=utf-8
+Content-Length: 294
+ETag: W/"126-jBgR8osJ2bQVJLjURK4BWvIzzQs"
+Date: Wed, 14 Jan 2026 21:53:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"error":{"code":"VALIDATION_ERROR","message":"Request validation failed","details":{"errors":[{"field":"email","message":"Required"},{"field":"password","message":"Required"}]}},"meta":{"requestId":"d88a563e-7dad-4444-9930-40e8cc8bd8fd","timestamp":"2026-01-14T21:53:06.714Z"}}
+8) Unauthorized Access to Devices (expected 401)
+HTTP/1.1 401 Unauthorized
+X-Request-ID: d386a60e-f146-4fba-bb04-28633ac12160
+Content-Security-Policy: default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data: https:;connect-src 'self';font-src 'self';object-src 'none';media-src 'self';frame-src 'none';base-uri 'self';form-action 'self';frame-ancestors 'none';upgrade-insecure-requests;script-src-attr 'none'
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: strict-origin-when-cross-origin
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: DENY
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: X-Request-ID,X-RateLimit-Limit,X-RateLimit-Remaining
+RateLimit-Policy: 100;w=900
+RateLimit-Limit: 100
+RateLimit-Remaining: 90
+RateLimit-Reset: 779
+Content-Type: application/json; charset=utf-8
+Content-Length: 197
+ETag: W/"c5-oc0Qn4CollWwRWoaCNswzuocVdM"
+Date: Wed, 14 Jan 2026 21:53:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"error":{"code":"AUTHENTICATION_ERROR","message":"Authorization header missing"},"meta":{"requestId":"d386a60e-f146-4fba-bb04-28633ac12160","timestamp":"2026-01-14T21:53:06.727Z"}}
+== Brute Force / Rate Limit Test ==
+9) Login spam (check for 429 after a few attempts)
+Attempt 01 -> 401
+Attempt 02 -> 401
+Attempt 03 -> 429
+Attempt 04 -> 429
+Attempt 05 -> 429
+Attempt 06 -> 429
+Attempt 07 -> 429
+Attempt 08 -> 429
+Attempt 09 -> 429
+Attempt 10 -> 429
+Attempt 11 -> 429
+Attempt 12 -> 429
+Attempt 13 -> 429
+Attempt 14 -> 429
+Attempt 15 -> 429
+Attempt 16 -> 429
+Attempt 17 -> 429
+Attempt 18 -> 429
+Attempt 19 -> 429
+Attempt 20 -> 429
+Attempt 21 -> 429
+Attempt 22 -> 429
+Attempt 23 -> 429
+Attempt 24 -> 429
+Attempt 25 -> 429
+Attempt 26 -> 429
+Attempt 27 -> 429
+Attempt 28 -> 429
+Attempt 29 -> 429
+Attempt 30 -> 429
+
+Done.

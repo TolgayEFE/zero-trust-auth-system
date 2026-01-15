@@ -1,0 +1,42 @@
+# Dockerfile for microservices
+FROM node:20-alpine
+
+ARG SERVICE_NAME
+ENV SERVICE_NAME=${SERVICE_NAME}
+
+WORKDIR /app
+
+# Install dependencies for building
+RUN apk add --no-cache python3 make g++
+
+# Copy package files from root
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy service source
+COPY services/${SERVICE_NAME}/ ./services/${SERVICE_NAME}/
+
+# Build the service
+RUN npx tsc services/${SERVICE_NAME}/index.ts --outDir dist/services/${SERVICE_NAME} \
+    --module commonjs \
+    --target ES2022 \
+    --esModuleInterop \
+    --skipLibCheck \
+    --resolveJsonModule
+
+# Security hardening
+RUN addgroup -g 1001 service \
+    && adduser -D -u 1001 -G service service \
+    && chown -R service:service /app
+
+USER service
+
+ENV NODE_ENV=production
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/health || exit 1
+
+CMD ["sh", "-c", "node dist/services/$SERVICE_NAME/index.js"]

@@ -1,0 +1,32 @@
+{
+  "input": {
+    "request": {
+      "path": "/api/products",
+      "headers": {}
+    },
+    "action": "read",
+    "resource": {
+      "type": "products",
+      "id": "p1"
+    },
+    "subject": {
+      "user": {
+        "id": "u1",
+        "roles": ["user"],
+        "permissions": ["read:products"],
+        "mfaVerified": true
+      },
+      "device": {
+        "trusted": true
+      },
+      "client": {
+        "ip": "192.168.1.10"
+      }
+    },
+    "context": {
+      "trustLevel": "high",
+      "riskScore": 20,
+      "rateLimit": { "exceeded": false }
+    }
+  }
+}

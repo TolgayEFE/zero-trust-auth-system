@@ -1,0 +1,234 @@
+version: '3.8'
+
+services:
+  # Zero Trust API Gateway
+  gateway:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: zero-trust-gateway
+    ports:
+      - "3000:3000"
+      - "9090:9090"
+    environment:
+      - NODE_ENV=production
+      - JWT_SECRET=your-super-secret-jwt-key-at-least-32-chars
+      - REDIS_HOST=redis
+      - MONGODB_URI=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=zero-trust-auth
+      - OPA_URL=http://opa:8181
+      - OPA_ENABLED=true
+      - FEATURE_MTLS=false
+      - MTLS_ENABLED=false
+      #- MTLS_CA_CERT_PATH=/app/certs/ca.crt
+      #- MTLS_SERVER_CERT_PATH=/app/certs/server.crt
+      #- MTLS_SERVER_KEY_PATH=/app/certs/server.key
+      #- MTLS_CLIENT_CERT_REQUIRED=false
+      - CORS_ORIGINS=http://localhost:3002,https://localhost:3002
+      - SERVICE_USERS_URL=http://users-service:4001/graphql
+      - SERVICE_PRODUCTS_URL=http://products-service:4002/graphql
+      - SERVICE_ORDERS_URL=http://orders-service:4003/graphql
+      - SERVICE_INVENTORY_URL=http://inventory-service:4004/graphql
+    volumes:
+      - gateway-logs:/app/logs
+      - ../certs:/app/certs:ro
+    depends_on:
+      - redis
+      - mongodb
+      - opa
+    networks:
+      - zero-trust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # MongoDB for data persistence
+  mongodb:
+    image: mongo:7.0
+    container_name: zero-trust-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=zero-trust-auth
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - zero-trust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Redis for rate limiting and session storage
+  redis:
+    image: redis:7-alpine
+    container_name: zero-trust-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --requirepass redispassword
+    networks:
+      - zero-trust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
+  # Open Policy Agent for authorization
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: zero-trust-opa
+    ports:
+      - "8181:8181"
+    command:
+      - "run"
+      - "--server"
+      - "--addr=0.0.0.0:8181"
+      - "--log-level=info"
+      - "/policies"
+    volumes:
+      - ../policies:/policies:ro
+    networks:
+      - zero-trust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8181/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Users Microservice
+  users-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.service
+      args:
+        SERVICE_NAME: users-service
+    container_name: zero-trust-users-service
+    ports:
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - NODE_ENV=production
+    networks:
+      - zero-trust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Products Microservice
+  products-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.service
+      args:
+        SERVICE_NAME: products-service
+    container_name: zero-trust-products-service
+    ports:
+      - "4002:4002"
+    environment:
+      - PORT=4002
+      - NODE_ENV=production
+    networks:
+      - zero-trust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Orders Microservice
+  orders-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.service
+      args:
+        SERVICE_NAME: orders-service
+    container_name: zero-trust-orders-service
+    ports:
+      - "4003:4003"
+    environment:
+      - PORT=4003
+      - NODE_ENV=production
+    networks:
+      - zero-trust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Inventory Microservice
+  inventory-service:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.service
+      args:
+        SERVICE_NAME: inventory-service
+    container_name: zero-trust-inventory-service
+    ports:
+      - "4004:4004"
+    environment:
+      - PORT=4004
+      - NODE_ENV=production
+    networks:
+      - zero-trust-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+
+  # Frontend
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3000
+    container_name: zero-trust-frontend
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:3000
+    networks:
+      - zero-trust-network
+    depends_on:
+      - gateway
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3002"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  gateway-logs:
+  mongodb-data:
+  redis-data:
+
+networks:
+  zero-trust-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
